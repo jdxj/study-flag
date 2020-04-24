@@ -12,6 +12,7 @@ type CmdHandler interface {
 
 var ErrRepeatedSubCmd = errors.New("repeated sub commands")
 var ErrCmdHandlerNotFound = errors.New("cmd handler not found")
+var ErrCmdHandlerNil = errors.New("nil cmd handler")
 
 var cmdManager = newSubCmdSet()
 
@@ -22,8 +23,11 @@ func newSubCmdSet() *subCmdSet {
 	return subCmdSet
 }
 
-func RegisterCmd(handler CmdHandler) error {
-	return cmdManager.registerCmd(handler)
+func RegisterCmd(handler CmdHandler) {
+	if handler == nil {
+		panic(ErrCmdHandlerNil)
+	}
+	cmdManager.registerCmd(handler)
 }
 
 func Handle(subCmd string) error {
@@ -39,12 +43,11 @@ type subCmdSet struct {
 	subCmd map[string]CmdHandler
 }
 
-func (scs *subCmdSet) registerCmd(handler CmdHandler) error {
+func (scs *subCmdSet) registerCmd(handler CmdHandler) {
 	if _, ok := scs.subCmd[handler.Name()]; ok {
-		return ErrRepeatedSubCmd
+		panic(ErrRepeatedSubCmd)
 	}
 	scs.subCmd[handler.Name()] = handler
-	return nil
 }
 
 func (scs *subCmdSet) handler(subCmd string) CmdHandler {

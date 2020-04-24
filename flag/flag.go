@@ -2,15 +2,18 @@ package flag
 
 import (
 	"flag"
-	"fmt"
 	"os"
 )
 
 // flag.go 文件中的 struct 实现了 CmdHandler 接口, 仅仅是使用例子
 
 type GreetCmd struct {
+	// 参数
 	say *string
 	bye *string
+
+	// 可以组合业务对象
+	// abc Abc
 }
 
 func (greet *GreetCmd) Name() string {
@@ -27,8 +30,7 @@ func (greet *GreetCmd) Handle() error {
 		return err
 	}
 
-	// 一些业务逻辑可能在这里调用
-	fmt.Println(*greet.say)
-	fmt.Println(*greet.bye)
+	// 调用 abc 的方法
+	// return abc.Handle(*greet.say, *greet.bye)
 	return nil
 }
